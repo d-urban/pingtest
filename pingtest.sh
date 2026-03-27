@@ -705,15 +705,16 @@ cmd_latencycheck() {
                 high = bounds[i+1] + 0
                 key = day SUBSEP i
                 cnt = (key in bucket_counts) ? bucket_counts[key] : 0
-                printf "  %5d-%d ms:  %d\n", low, high, cnt
+                label = low "-" high " ms"
+                printf "  %9s:  %d\n", label, cnt
             }
             # Above highest
             key = day SUBSEP n_bounds
             cnt = (key in bucket_counts) ? bucket_counts[key] : 0
-            printf "  %5d+ ms:     %d\n", bounds[n_bounds] + 0, cnt
+            printf "  %9s:  %d\n", bounds[n_bounds] + 0 "+ ms", cnt
 
             to = (day in timeouts) ? timeouts[day] : 0
-            printf "  Missed:       %d\n", to
+            printf "  %9s:  %d\n", "Missed", to
         }
 
         if (n_days == 0) {
@@ -750,9 +751,15 @@ cmd_avglat() {
     local hostinfo
     hostinfo=$(grep '^# host=' "${file}" | head -1 | sed 's/^# host=//')
 
-    printf "Start Time,End Time,Avg Latency (ms),Missed Pings\n"
+    printf "%-19s   %-19s   %-18s %s\n" "Start Time" "End Time" "Avg Latency (ms)" "Missed Pings"
 
     awk -F',' -v window="${count}" '
+    function fmt_ts(ts) {
+        # Replace T separator with space and strip timezone offset
+        gsub(/T/, " ", ts)
+        sub(/[+-][0-9][0-9]:[0-9][0-9]$/, "", ts)
+        return ts
+    }
     /^#/ || /^timestamp/ { next }
     {
         ts = $1
@@ -765,7 +772,6 @@ cmd_avglat() {
 
         if (status == "timeout") {
             missed++
-            # Count timeout as 0 in the latency sum
         } else {
             lat_sum += latency
         }
@@ -777,7 +783,7 @@ cmd_avglat() {
             } else {
                 avg = 0
             }
-            printf "%s,%s,%.2f,%d\n", win_start, win_end, avg, missed
+            printf "%s - %s   %-18.2f %d\n", fmt_ts(win_start), fmt_ts(win_end), avg, missed
 
             # Reset window
             idx = 0
