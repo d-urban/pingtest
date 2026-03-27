@@ -111,8 +111,14 @@ cmd_help() {
             printf "  ${C_WHI}-t COUNT${C_RST}      Total number of pings to send (default: 2592000 / 30 days)\n"
             printf "  ${C_WHI}-i INTERVAL${C_RST}   Seconds between pings (default: 1)\n"
             printf "\n${C_CYA}Examples:${C_RST}\n"
-            printf "  ${C_YEL}${SCRIPT_NAME} start -f webserver.csv -h 172.27.84.170${C_RST}\n"
-            printf "  ${C_YEL}${SCRIPT_NAME} start -f webserver.csv -h webserver01 -t 3600 -i 2${C_RST}\n"
+            printf "  ${C_WHI}# Ping a host by name for the default 30 days${C_RST}\n"
+            printf "  ${C_YEL}${SCRIPT_NAME} start -f webserver.csv -h webserver01${C_RST}\n"
+            printf "\n"
+            printf "  ${C_WHI}# Ping an IP for 1 hour (3600 pings at 1/sec)${C_RST}\n"
+            printf "  ${C_YEL}${SCRIPT_NAME} start -f router.csv -h 172.27.84.170 -t 3600${C_RST}\n"
+            printf "\n"
+            printf "  ${C_WHI}# 24-hour test pinging every 2 seconds${C_RST}\n"
+            printf "  ${C_YEL}${SCRIPT_NAME} start -f switch.csv -h core-switch01 -t 43200 -i 2${C_RST}\n"
             ;;
         stop)
             printf "\n${C_CYA}Usage:${C_RST}\n"
@@ -121,7 +127,11 @@ cmd_help() {
             printf "  Gracefully stop a running ping test by sending SIGTERM to the\n"
             printf "  background process. Reads the PID from <FILE>.pid.\n"
             printf "\n${C_CYA}Examples:${C_RST}\n"
+            printf "  ${C_WHI}# Stop the test writing to webserver.csv${C_RST}\n"
             printf "  ${C_YEL}${SCRIPT_NAME} stop -f webserver.csv${C_RST}\n"
+            printf "\n"
+            printf "  ${C_WHI}# Stop the test writing to router.csv${C_RST}\n"
+            printf "  ${C_YEL}${SCRIPT_NAME} stop -f router.csv${C_RST}\n"
             ;;
         status)
             printf "\n${C_CYA}Usage:${C_RST}\n"
@@ -130,7 +140,10 @@ cmd_help() {
             printf "  Show status of running ping tests. If -f is given, check only\n"
             printf "  that test. Otherwise, check all .pid files in the current directory.\n"
             printf "\n${C_CYA}Examples:${C_RST}\n"
+            printf "  ${C_WHI}# Show status of all running tests in the current directory${C_RST}\n"
             printf "  ${C_YEL}${SCRIPT_NAME} status${C_RST}\n"
+            printf "\n"
+            printf "  ${C_WHI}# Check status of a specific test${C_RST}\n"
             printf "  ${C_YEL}${SCRIPT_NAME} status -f webserver.csv${C_RST}\n"
             ;;
         pingcheck|pc)
@@ -143,7 +156,14 @@ cmd_help() {
             printf "  ${C_WHI}-f FILE${C_RST}       Data file to analyze (required)\n"
             printf "  ${C_WHI}-c COUNT${C_RST}      Minimum consecutive missed pings to report (required)\n"
             printf "\n${C_CYA}Examples:${C_RST}\n"
+            printf "  ${C_WHI}# Find drops of 4+ consecutive missed pings${C_RST}\n"
             printf "  ${C_YEL}${SCRIPT_NAME} pingcheck -f webserver.csv -c 4${C_RST}\n"
+            printf "\n"
+            printf "  ${C_WHI}# Find only longer outages (10+ consecutive drops)${C_RST}\n"
+            printf "  ${C_YEL}${SCRIPT_NAME} pingcheck -f webserver.csv -c 10${C_RST}\n"
+            printf "\n"
+            printf "  ${C_WHI}# Same command using the short alias${C_RST}\n"
+            printf "  ${C_YEL}${SCRIPT_NAME} pc -f router.csv -c 3${C_RST}\n"
             ;;
         latencycheck|lc)
             printf "\n${C_CYA}Usage:${C_RST}\n"
@@ -157,9 +177,17 @@ cmd_help() {
             printf "  ${C_WHI}-b BUCKETS${C_RST}    Comma-separated bucket boundaries in ms\n"
             printf "                  (default: 0,10,20,30,40,50,60,70,80,90,100)\n"
             printf "\n${C_CYA}Examples:${C_RST}\n"
+            printf "  ${C_WHI}# Show all days with default 10ms buckets${C_RST}\n"
             printf "  ${C_YEL}${SCRIPT_NAME} latencycheck -f webserver.csv${C_RST}\n"
+            printf "\n"
+            printf "  ${C_WHI}# Filter to a single day${C_RST}\n"
             printf "  ${C_YEL}${SCRIPT_NAME} latencycheck -f webserver.csv -d 2026-03-26${C_RST}\n"
+            printf "\n"
+            printf "  ${C_WHI}# Custom bucket boundaries${C_RST}\n"
             printf "  ${C_YEL}${SCRIPT_NAME} latencycheck -f webserver.csv -b 0,5,10,25,50,100,200${C_RST}\n"
+            printf "\n"
+            printf "  ${C_WHI}# Single day with custom buckets using the short alias${C_RST}\n"
+            printf "  ${C_YEL}${SCRIPT_NAME} lc -f webserver.csv -d 2026-03-26 -b 0,5,25,50,100${C_RST}\n"
             ;;
         avglat|al)
             printf "\n${C_CYA}Usage:${C_RST}\n"
@@ -171,8 +199,14 @@ cmd_help() {
             printf "  ${C_WHI}-f FILE${C_RST}       Data file to analyze (required)\n"
             printf "  ${C_WHI}-c COUNT${C_RST}      Window size in pings (default: 30)\n"
             printf "\n${C_CYA}Examples:${C_RST}\n"
+            printf "  ${C_WHI}# Rolling average over default 30 pings${C_RST}\n"
             printf "  ${C_YEL}${SCRIPT_NAME} avglat -f webserver.csv${C_RST}\n"
+            printf "\n"
+            printf "  ${C_WHI}# Average over 60-ping windows${C_RST}\n"
             printf "  ${C_YEL}${SCRIPT_NAME} avglat -f webserver.csv -c 60${C_RST}\n"
+            printf "\n"
+            printf "  ${C_WHI}# Hourly average (3600 pings per window) using the short alias${C_RST}\n"
+            printf "  ${C_YEL}${SCRIPT_NAME} al -f webserver.csv -c 3600${C_RST}\n"
             ;;
         stats)
             printf "\n${C_CYA}Usage:${C_RST}\n"
@@ -181,7 +215,11 @@ cmd_help() {
             printf "  Show comprehensive summary statistics including min, max, mean,\n"
             printf "  median, P95, P99 latency, jitter (stddev), and packet loss %%.\n"
             printf "\n${C_CYA}Examples:${C_RST}\n"
+            printf "  ${C_WHI}# Full summary for a webserver test${C_RST}\n"
             printf "  ${C_YEL}${SCRIPT_NAME} stats -f webserver.csv${C_RST}\n"
+            printf "\n"
+            printf "  ${C_WHI}# Stats for a router test${C_RST}\n"
+            printf "  ${C_YEL}${SCRIPT_NAME} stats -f router.csv${C_RST}\n"
             ;;
         "")
             printf "\n${C_CYA}pingtest.sh v${VERSION}${C_RST} - Network ping monitoring and analysis\n"
@@ -197,9 +235,14 @@ cmd_help() {
             printf "  ${C_WHI}stats${C_RST}          Summary statistics (min/max/median/p95/p99/jitter)\n"
             printf "  ${C_WHI}help${C_RST}           Show this help, or help for a specific command\n"
             printf "\n${C_CYA}Examples:${C_RST}\n"
+            printf "  ${C_YEL}${SCRIPT_NAME} help start/stop/status/stats/pingcheck/latencycheck/avglat${C_RST}\n"
             printf "  ${C_YEL}${SCRIPT_NAME} start -f myhost.csv -h 10.0.0.1${C_RST}\n"
+            printf "  ${C_YEL}${SCRIPT_NAME} status${C_RST}\n"
             printf "  ${C_YEL}${SCRIPT_NAME} stats -f myhost.csv${C_RST}\n"
-            printf "  ${C_YEL}${SCRIPT_NAME} help start${C_RST}\n"
+            printf "  ${C_YEL}${SCRIPT_NAME} pingcheck -f myhost.csv -c 5${C_RST}\n"
+            printf "  ${C_YEL}${SCRIPT_NAME} latencycheck -f myhost.csv${C_RST}\n"
+            printf "  ${C_YEL}${SCRIPT_NAME} avglat -f myhost.csv${C_RST}\n"
+            printf "  ${C_YEL}${SCRIPT_NAME} stop -f myhost.csv${C_RST}\n"
             ;;
         *)
             die "Unknown command: ${cmd} (see: ${SCRIPT_NAME} help)"
