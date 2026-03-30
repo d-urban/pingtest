@@ -297,7 +297,7 @@ cmd_start() {
     if test_output=$(ping -c 1 -W 5 "${host}" 2>&1); then
         # Extract the IP from the first line, e.g. "PING hostname (1.2.3.4) ..."
         local ip
-        ip=$(printf '%s\n' "${test_output}" | head -1 | sed -n 's/.*(\([^)]*\)).*/\1/p')
+        ip=$(printf '%s\n' "${test_output}" | head -1 | sed -n 's/^[^(]*(\([^)]*\)).*/\1/p')
         if [[ -n "${ip}" ]]; then
             resolved_host="${host} (${ip})"
         fi
